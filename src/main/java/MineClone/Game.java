@@ -59,7 +59,7 @@ public class Game {
 }*/
 
     public Game(int width, int height, String title, boolean vSync){
-        window = new Window(width, height, "MineClone", vSync);
+        window = new Window(width, height, title, vSync);
         input = new Input();
     }
 

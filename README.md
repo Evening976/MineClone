@@ -4,7 +4,7 @@ Le plan :
 - Architecture
   - [ ] Tout mettre dans des classes propres
     - [ ] (Ré)-Apprendre à utiliser OpenGL
-    - [ ] Potentiellement Inputs à part
+    - [x] Potentiellement Inputs à part
 - Génération
   - [ ] Pseudo illimitée
     - [ ] Perlin Noise

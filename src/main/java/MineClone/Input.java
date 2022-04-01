@@ -19,7 +19,7 @@ public class Input {
                         }
                         break;
                     case GLFW_KEY_W:
-                        if (action == GLFW_PRESS){
+                        if (action == GLFW_REPEAT || action == GLFW_PRESS) {
                             System.out.println("Z");
                         }
                 }

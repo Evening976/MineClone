@@ -1,81 +1,111 @@
 package MineClone;
 
+import MineClone.Input.KeyboardInput;
+import MineClone.Input.MouseInput;
+import MineClone.entity.Block;
+import MineClone.graphics.*;
+import MineClone.utils.Loader;
+import org.joml.Vector2f;
+import org.joml.Vector3f;
+
 import static org.lwjgl.glfw.GLFW.*;
 
 public class Game {
 
-    private final Window window;
-    private final Input input;
+    public static final float FOV = (float) Math.toRadians(60.0f);
+    public static final float Z_NEAR = 0.01f;
+    public static final float Z_FAR = 1000.f;
 
-    /*
-    **SPOILER ALERT** :
-    private final Window window;
-    private final Input input;
+    private static Window window = null;
     private final Renderer renderer;
+    private final KeyboardInput input;
+    private final MouseInput mouseInput;
+
+    private final Loader loader;
+    private Entity entity;
     private final Camera camera;
-    private final World world;
-    private final Player player;
-    private final ChunkManager chunkManager;
-    private final int chunkSize = 16;
 
-    public Game() {
-        window = new Window();
-        input = new Input();
-        renderer = new Renderer();
-        camera = new Camera();
-        world = new World();
-        player = new Player(world);
-        chunkManager = new ChunkManager(world, chunkSize);
-    }
+    Vector3f cameraInc;
 
-    public void run() {
-        window.create();
-        input.create();
-        renderer.create();
-        camera.create();
-        world.create();
-        player.create();
-        chunkManager.create();
 
-        while (!window.shouldClose()) {
-            input.update();
-            camera.update();
-            player.update();
-            chunkManager.update();
-            world.update();
-            renderer.update();
-            window.update();
-        }
 
-        window.destroy();
-        input.destroy();
-        renderer.destroy();
-        camera.destroy();
-        world.destroy();
-        player.destroy();
-        chunkManager.destroy();
-    }
-    **SPOILERS ENDED**
-}*/
 
     public Game(int width, int height, String title, boolean vSync){
         window = new Window(width, height, title, vSync);
-        input = new Input();
+        renderer = new Renderer();
+        input = new KeyboardInput();
+        loader = new Loader();
+        camera = new Camera();
+        cameraInc = new Vector3f(0,0,0);
+        mouseInput = new MouseInput();
     }
 
-    public void init(){
+    public void init() throws Exception {
         window.create();
+        renderer.create();
+        mouseInput.init();
         input.register(window.getWindow());
+
+        Model model = loader.loadModel(Block.getVertices(), Block.getTextCoords(), Block.getIndices());
+        model.setTexture(new Texture(loader.loadTexture(Block.getBlockPath())));
+        entity = new Entity(model, new Vector3f(0, 0, -5), new Vector3f(0,0,0), 1);
     }
 
     public void run(){
         while(!glfwWindowShouldClose(window.getWindow())){
-            input.Update();
-            window.render();
+            renderer.render(entity, camera);
+            HandleInput();
+            update(mouseInput);
+            glfwSwapBuffers(window.getWindow());
         }
 
+        destroyGame();
+    }
+
+    private void update(MouseInput mouseInput){
+       camera.movePos(cameraInc.mul(0.5f*0.3f));
+
+
+       Vector2f rotVec = mouseInput.getDisplVec();
+       camera.moveRotation(rotVec.mul(0.1f), 0);
+
+
+       entity.incRot(0.0f, 0.5f,0.0f);
+    }
+
+    public static Window getWindow(){
+        return window;
+    }
+
+    private void HandleInput(){
+        input.Update();
+        mouseInput.input();
+
+        if(input.isKeyDown(GLFW_KEY_W)){
+            cameraInc.z = -1f;
+        }
+        if(input.isKeyDown(GLFW_KEY_S)){
+            cameraInc.z = 1f;
+        }
+        if(input.isKeyDown(GLFW_KEY_A)){
+            cameraInc.x = -1f;
+        }
+        if(input.isKeyDown(GLFW_KEY_D)){
+            cameraInc.x = 1f;
+        }
+        if(input.isKeyDown(GLFW_KEY_SPACE)){
+            cameraInc.y = 1f;
+        }
+        if(input.isKeyDown(GLFW_KEY_LEFT_SHIFT)){
+            cameraInc.y = -1f;
+        }
+    }
+
+    private void destroyGame(){
         input.destroy();
         window.destroy();
+        renderer.destroy();
+        loader.destroy();
     }
 }
 

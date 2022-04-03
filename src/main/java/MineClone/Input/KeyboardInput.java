@@ -1,30 +1,28 @@
-package MineClone;
+package MineClone.Input;
 
 import org.lwjgl.glfw.GLFWKeyCallback;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-public class Input {
+public class KeyboardInput {
 
+    int[] keys = new int[65536];
     GLFWKeyCallback keyCallback;
 
-    public Input() {
+    public KeyboardInput() {
         keyCallback = new GLFWKeyCallback() {
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
-                switch (key) {
-                    case GLFW_KEY_ESCAPE:
-                        if (action == GLFW_RELEASE){
-                            glfwSetWindowShouldClose(window, true);
-                        }
-                        break;
-                    case GLFW_KEY_W:
-                        if (action == GLFW_REPEAT || action == GLFW_PRESS) {
-                            System.out.println("Z");
-                        }
+                keys[key] = action;
+                if(keys[GLFW_KEY_ESCAPE] == GLFW_PRESS) {
+                    glfwSetWindowShouldClose(window, true);
                 }
             }
         };
+    }
+
+    public boolean isKeyDown(int key){
+        return keys[key] == GLFW_PRESS;
     }
 
     public void register(long window) {

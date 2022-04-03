@@ -78,6 +78,7 @@
       <root url="jar://$USER_HOME$/Documents/Libs/Java/LWJGL/lwjgl-sse.jar!/" />
       <root url="jar://$USER_HOME$/Documents/Libs/Java/LWJGL/lwjgl-vulkan.jar!/" />
       <root url="jar://$USER_HOME$/Documents/Libs/Java/LWJGL/lwjgl-ovr-natives-windows.jar!/" />
+      <root url="file://$USER_HOME$/Documents/Libs/Java/LWJGL" />
     </CLASSES>
     <JAVADOC>
       <root url="jar://$USER_HOME$/Documents/Libs/Java/LWJGL/lwjgl-rpmalloc-javadoc.jar!/" />
@@ -123,5 +124,6 @@
       <root url="jar://$USER_HOME$/Documents/Libs/Java/LWJGL/lwjgl-stb-javadoc.jar!/" />
     </JAVADOC>
     <SOURCES />
+    <jarDirectory url="file://$USER_HOME$/Documents/Libs/Java/LWJGL" recursive="false" />
   </library>
 </component>

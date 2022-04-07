@@ -84,8 +84,7 @@ public class Window {
         glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_STENCIL_TEST);
-        //glEnable(GL_CULL_FACE);
-        //glCullFace(GL_BACK);
+
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         System.out.println("Window created! OpenGL Version: " + glGetString(GL_VERSION));
     }

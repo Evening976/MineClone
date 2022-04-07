@@ -6,8 +6,6 @@ import MineClone.utils.Transformation;
 import MineClone.utils.Utils;
 import org.lwjgl.opengl.GL11;
 
-import static org.lwjgl.glfw.GLFW.glfwSwapBuffers;
-import static org.lwjgl.glfw.GLFW.glfwWindowShouldClose;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL13.glActiveTexture;
@@ -25,8 +23,9 @@ public class Renderer {
 
     public void create() throws Exception {
         shader = new ShaderManager();
-        shader.createVertexShader(Utils.loadResource("/shaders/vertex.vs"));
         shader.createFragmentShader(Utils.loadResource("/shaders/fragment.fs"));
+        shader.createVertexShader(Utils.loadResource("/shaders/vertex.vs"));
+
         shader.link();
         shader.createUniform("textureSampler");
         shader.createUniform("transformationMatrix");

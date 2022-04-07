@@ -2,28 +2,35 @@ package MineClone.Input;
 
 import MineClone.Game;
 import MineClone.Window;
-import org.joml.Vector2d;
-import org.joml.Vector2f;
+import org.joml.*;
 import org.lwjgl.glfw.GLFW;
+
+import java.lang.Math;
 
 import static org.lwjgl.glfw.GLFW.glfwSetCursorEnterCallback;
 import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 
 public class MouseInput {
     private final Vector2d previousPos, currentPos;
-    private final Vector2f displVec;
+    private Vector3f displVec;
     private boolean inWindow = false, leftButtonPressed = false, rightButtonPressed = false;
+
+    private boolean firstMouse = false;
+    double lastX, lastY;
+    double yaw, pitch;
+    Vector3f direction, cameraFront;
 
     public MouseInput() {
         previousPos = new Vector2d(-1, -1);
         currentPos = new Vector2d(0,0);
-        displVec = new Vector2f();
+        displVec = new Vector3f();
+        firstMouse = true;
     }
 
     public void init(){
         GLFW.glfwSetCursorPosCallback(Game.getWindow().getWindow(), (window, xpos, ypos) -> {
-           currentPos.x = xpos;
-           currentPos.y = ypos;
+            currentPos.x = xpos;
+            currentPos.y = ypos;
         });
 
         glfwSetCursorEnterCallback(Game.getWindow().getWindow(), (window, entered) -> inWindow = entered);
@@ -35,19 +42,13 @@ public class MouseInput {
     }
 
     public void input(){
-        displVec.x = 0;
-        displVec.y = 0;
-        if(previousPos.x >= 0 && previousPos.y >= 0 && inWindow){
+        if(previousPos.x != 0 && previousPos.y != 0 && inWindow){
             double x =  (currentPos.x - previousPos.x);
             double y =  (currentPos.y - previousPos.y);
-            boolean rotX = x != 0;
-            boolean rotY = y != 0;
-            if(rotX)
-                displVec.y = (float)x;
-            if(rotY)
-                displVec.x = (float)y;
-
+            displVec.y = (float)x;
+            displVec.x = (float)y;
         }
+
         previousPos.x = currentPos.x;
         previousPos.y = currentPos.y;
     }
@@ -60,7 +61,14 @@ public class MouseInput {
         return rightButtonPressed;
     }
 
-    public Vector2f getDisplVec() {
+    public Vector3f getDisplVec() {
         return displVec;
     }
+    public float getPitch() {
+        return (float) pitch;
+    }
+    public float getYaw() {
+        return (float) yaw;
+    }
+
 }

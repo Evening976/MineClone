@@ -37,7 +37,6 @@ public class Game {
         camera = new Camera();
         cameraInc = new Vector3f(0,0,0);
         mouseInput = new MouseInput();
-        //camera2 = new Camera2();
     }
 
     public void init() throws Exception {

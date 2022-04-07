@@ -12,19 +12,14 @@ import static org.lwjgl.glfw.GLFW.glfwSetMouseButtonCallback;
 
 public class MouseInput {
     private final Vector2d previousPos, currentPos;
-    private Vector3f displVec;
+    private final Vector3f displVec;
     private boolean inWindow = false, leftButtonPressed = false, rightButtonPressed = false;
-
-    private boolean firstMouse = false;
-    double lastX, lastY;
     double yaw, pitch;
-    Vector3f direction, cameraFront;
 
     public MouseInput() {
         previousPos = new Vector2d(-1, -1);
         currentPos = new Vector2d(0,0);
         displVec = new Vector3f();
-        firstMouse = true;
     }
 
     public void init(){

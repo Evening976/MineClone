@@ -3,6 +3,7 @@ package MineClone.utils;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Utils {
@@ -17,4 +18,6 @@ public class Utils {
         }
         return result;
     }
+
+    public static final Random rnd = new Random();
 }

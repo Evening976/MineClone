@@ -1,9 +1,9 @@
 package MineClone;
 
-import MineClone.Input.KeyboardInput;
-import MineClone.Input.MouseInput;
-import MineClone.entity.Block;
+import MineClone.world.ChunkManager;
 import MineClone.graphics.*;
+import MineClone.player.Player;
+import MineClone.utils.FPS;
 import MineClone.utils.Loader;
 import org.joml.Vector3f;
 
@@ -11,20 +11,23 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class Game {
 
-    public static final float FOV = (float) Math.toRadians(60.0f);
+    public static final float FOV = (float) Math.toRadians(90.0f);
     public static final float Z_NEAR = 0.01f;
     public static final float Z_FAR = 1000.f;
     public static final float MOUSE_SENSITIVITY = 0.05f;
-    public static final float MOVEMENT_SENSITIVITY = 0.1f;
+    public static final float MOVEMENT_SENSITIVITY = 10.0f;
+    public static final int CHUNK_SIZE = 16;
 
     private static Window window = null;
     private final Renderer renderer;
-    private final KeyboardInput input;
-    private final MouseInput mouseInput;
 
     private final Loader loader;
-    private Entity entity;
     private final Camera camera;
+    private final Player player;
+
+    private final FPS fpsCounter;
+
+    private ChunkManager m_chunkManager;
 
 
     Vector3f cameraInc;
@@ -32,93 +35,56 @@ public class Game {
     public Game(int width, int height, String title, boolean vSync){
         window = new Window(width, height, title, vSync);
         renderer = new Renderer();
-        input = new KeyboardInput();
         loader = new Loader();
         camera = new Camera();
-        cameraInc = new Vector3f(0,0,0);
-        mouseInput = new MouseInput();
+        player = new Player();
+        fpsCounter = new FPS();
     }
 
     public void init() throws Exception {
         window.create();
         renderer.create();
-        mouseInput.init();
-        input.register(window.getWindow());
-        Model model = loader.loadModel(Block.getVertices(), Block.getTextCoords(), Block.getIndices());
-        model.setTexture(new Texture(loader.loadTexture(Block.getBlockPath())));
-        entity = new Entity(model, new Vector3f(0, 0, -5), new Vector3f(0,0,0), 1);
+        player.init();
+
+        m_chunkManager = new ChunkManager();
+
+        for(int x = -7; x < 7; x++){
+            for (int z = -5; z < 5; z++) {
+                m_chunkManager.addChunk(new Vector3f(x * CHUNK_SIZE, -CHUNK_SIZE, z * CHUNK_SIZE));
+            }
+        }
     }
 
     public void run(){
-        while(!glfwWindowShouldClose(window.getWindow())){
+        while(!glfwWindowShouldClose(window.windowHandle())){
             update();
-            HandleInput();
-            renderer.render(entity, camera);
-            glfwSwapBuffers(window.getWindow());
+            render();
         }
-
         destroyGame();
     }
 
     private void update(){
-        camera.moveRotation(mouseInput.getDisplVec().mul(MOUSE_SENSITIVITY));
-        entity.incRot(0.0f, 0.0f,0.0f);
+        fpsCounter.update();
+        player.Update(camera, fpsCounter.deltaTime());
+        System.out.println("MineClone | FPS: " + fpsCounter.getFPS() + " | DeltaTime : " + fpsCounter.deltaTime());
+    }
+
+    private void render(){
+        renderer.renderChnkManager(m_chunkManager, camera);
+        glfwSwapBuffers(window.windowHandle());
     }
 
     public static Window getWindow(){
         return window;
     }
 
-    private void HandleInput(){
-        cameraInc = new Vector3f(0,0,0);
 
-        if(input.isKeyDown(GLFW_KEY_W)){
-            cameraInc.z -= MOVEMENT_SENSITIVITY;
-        }
-        if(input.isKeyDown(GLFW_KEY_S)){
-            cameraInc.z += MOVEMENT_SENSITIVITY;
-        }
-        if(input.isKeyDown(GLFW_KEY_A)){
-            cameraInc.x -= MOVEMENT_SENSITIVITY;
-        }
-        if(input.isKeyDown(GLFW_KEY_D)){
-            cameraInc.x += MOVEMENT_SENSITIVITY;
-        }
-        if(input.isKeyDown(GLFW_KEY_SPACE)){
-            cameraInc.y += MOVEMENT_SENSITIVITY;
-        }
-        if(input.isKeyDown(GLFW_KEY_LEFT_SHIFT)){
-            cameraInc.y += -1f * MOVEMENT_SENSITIVITY;
-        }
-
-        if(input.isKeyDown(GLFW_KEY_W) && input.isKeyDown(GLFW_KEY_D)){
-            cameraInc.z = -MOVEMENT_SENSITIVITY / 2;
-            cameraInc.x = MOVEMENT_SENSITIVITY / 2;
-        }
-        if(input.isKeyDown(GLFW_KEY_W) && input.isKeyDown(GLFW_KEY_A)){
-            cameraInc.z = -MOVEMENT_SENSITIVITY / 2;
-            cameraInc.x = -MOVEMENT_SENSITIVITY / 2;
-        }
-
-        if(input.isKeyDown(GLFW_KEY_S) && input.isKeyDown(GLFW_KEY_D)){
-            cameraInc.z = MOVEMENT_SENSITIVITY / 2;
-            cameraInc.x = MOVEMENT_SENSITIVITY / 2;
-        }
-        if(input.isKeyDown(GLFW_KEY_S) && input.isKeyDown(GLFW_KEY_A)){
-            cameraInc.z = MOVEMENT_SENSITIVITY / 2;
-            cameraInc.x = -MOVEMENT_SENSITIVITY / 2;
-        }
-
-        camera.movePos(cameraInc);
-        input.Update();
-        mouseInput.input();
-    }
-
-    private void destroyGame(){
-        input.destroy();
+    public void destroyGame(){
+        player.destroy();
         window.destroy();
         renderer.destroy();
         loader.destroy();
+        System.gc();
     }
 }
 

@@ -13,6 +13,7 @@ import java.nio.IntBuffer;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class Window {
@@ -47,6 +48,7 @@ public class Window {
         GLFW.glfwWindowHint(GLFW.GLFW_CONTEXT_VERSION_MINOR, 3);
         GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_PROFILE, GLFW.GLFW_OPENGL_CORE_PROFILE);
         GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, GLFW.GLFW_TRUE);
+        GLFW.glfwWindowHint(GLFW.GLFW_SAMPLES, 4);
 
         Boolean maximised = false;
         if(width == 0 || height == 0) {
@@ -81,9 +83,10 @@ public class Window {
         GL.createCapabilities();
         glfwShowWindow(window);
 
-        glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        glClearColor(0.0f, 0.0f, 0.5f, 1.0f);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_STENCIL_TEST);
+        glEnable(GL_MULTISAMPLE);
 
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         System.out.println("Window created! OpenGL Version: " + glGetString(GL_VERSION));
@@ -93,11 +96,13 @@ public class Window {
     public void destroy() {
         System.out.println("Closing window...");
 
+        glfwSetWindowShouldClose(window, true);
         glfwFreeCallbacks(window);
         glfwDestroyWindow(window);
 
-        glfwTerminate();
+
         glfwSetErrorCallback(null).free();
+        glfwTerminate();
     }
 
     public int getWidth() {
@@ -128,7 +133,7 @@ public class Window {
         return vSync;
     }
 
-    public long getWindow() {
+    public long windowHandle() {
         return window;
     }
 

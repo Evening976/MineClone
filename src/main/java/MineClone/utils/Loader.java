@@ -70,6 +70,7 @@ public class Loader {
         int vbo = glGenBuffers();
         vbos.add(vbo);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo);
+
         IntBuffer buffer = Buffer.createIntBuffer(indices);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
     }
@@ -77,8 +78,11 @@ public class Loader {
     private void storeDataInAttribList(int attributeNumber, int vertexCount, float[] data){
         int vbo = glGenBuffers();
         vbos.add(vbo);
+
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
         FloatBuffer buffer = Buffer.createFloatBuffer(data);
+
         glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
         glVertexAttribPointer(attributeNumber, vertexCount, GL_FLOAT, false, 0, 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);

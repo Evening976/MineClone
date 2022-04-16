@@ -1,5 +1,6 @@
 package MineClone.Input;
 
+import MineClone.Game;
 import org.lwjgl.glfw.GLFWKeyCallback;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -25,6 +26,7 @@ public class KeyboardInput {
         return keys[key] == GLFW_PRESS || keys[key] == GLFW_REPEAT;
     }
 
+
     public boolean isKeyRepeat(int key){
         return keys[key] == GLFW_REPEAT;
     }
@@ -35,9 +37,10 @@ public class KeyboardInput {
 
     public void destroy(){
         keyCallback = null;
+        glfwSetKeyCallback(Game.getWindow().windowHandle(), null);
     }
 
-    public void Update(){
+    public void update(){
         glfwPollEvents();
     }
 }

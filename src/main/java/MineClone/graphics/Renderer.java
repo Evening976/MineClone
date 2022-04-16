@@ -2,9 +2,13 @@ package MineClone.graphics;
 
 import MineClone.Game;
 import MineClone.Window;
+import MineClone.world.Chunk;
+import MineClone.world.ChunkManager;
 import MineClone.utils.Transformation;
 import MineClone.utils.Utils;
 import org.lwjgl.opengl.GL11;
+
+import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
@@ -14,6 +18,7 @@ import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
 public class Renderer {
+    public static final int VIEW_DISTANCE = Game.CHUNK_SIZE * 1000;
     private final Window window;
     private ShaderManager shader;
 
@@ -37,15 +42,59 @@ public class Renderer {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
     }
 
-    public void render(Entity entity, Camera camera) {
+    public void render(List<Entity> entity, Camera camera) {
+        Clear();
+        shader.bind();
+        shader.setUniform("projectionMatrix", window.updateProjectionMatrix());
+        //glFrontFace(GL_CCW);
+
+        for (Entity ent : entity) {
+            if (ent.getPosition().distance(camera.getPosition()) < VIEW_DISTANCE * 20) {
+                bind(ent.getModel());
+                prepare(ent, camera);
+                glDrawElements(GL11.GL_TRIANGLES, ent.getModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
+            }
+        }
+
+        unbind();
+        shader.unbind();
+    }
+
+    public void renderChnk(List<Chunk> chunks, Camera camera) {
         Clear();
         shader.bind();
         shader.setUniform("projectionMatrix", window.updateProjectionMatrix());
 
-        bind(entity.getModel());
-        prepare(entity, camera);
 
-        glDrawElements(GL11.GL_TRIANGLES, entity.getModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
+        for (Chunk chunk : chunks) {
+            if(chunk.isMeshed() && !chunk.canChnkRender()){
+                chunk.setTexture();
+            }
+            if (chunk.getPosition().distance(camera.getPosition()) < VIEW_DISTANCE && chunk.canChnkRender()) {
+                bind(chunk.getModel());
+                prepare(chunk, camera);
+                glDrawElements(GL11.GL_TRIANGLES, chunk.getModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
+            }
+        }
+
+        unbind();
+        shader.unbind();
+    }
+
+    public void renderChnkManager(ChunkManager chunkManager, Camera camera) {
+        Clear();
+        shader.bind();
+        shader.setUniform("projectionMatrix", window.updateProjectionMatrix());
+
+       List<Chunk> chunks = chunkManager.getChunks();
+
+        for (Chunk chunk : chunks) {
+            if (chunk.getPosition().distance(camera.getPosition()) < VIEW_DISTANCE) {
+                bind(chunk.getModel());
+                prepare(chunk, camera);
+                glDrawElements(GL11.GL_TRIANGLES, chunk.getModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
+            }
+        }
 
         unbind();
         shader.unbind();
@@ -68,6 +117,12 @@ public class Renderer {
     public void prepare(Entity entity, Camera camera){
         shader.setUniform("textureSampler", 0);
         shader.setUniform("transformationMatrix", Transformation.createTransformationMatrix(entity));
+        shader.setUniform("viewMatrix", Transformation.getViewMatrix(camera));
+    }
+
+    public void prepare(Chunk chunk, Camera camera){
+        shader.setUniform("textureSampler", 0);
+        shader.setUniform("transformationMatrix", Transformation.createChunkTransformationMatrix(chunk));
         shader.setUniform("viewMatrix", Transformation.getViewMatrix(camera));
     }
 

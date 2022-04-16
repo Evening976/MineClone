@@ -7,9 +7,9 @@ Le plan :
     - [x] Potentiellement Inputs à part
 - Génération
   - [ ] Pseudo illimitée
-    - [ ] Perlin Noise
+    - [x] Simplex Noise
       - [x] Type de bloc dépendant de la hauteur
-      - [ ] Génération en utilisant un genre de pointeur de texture pour la charger qu'une seule fois
+      - [x] Génération en utilisant un genre de pointeur de texture pour la charger qu'une seule fois
       - [x] Pour ce faire BlocID (0 = air; 1 = Dirt; 2 = Stone ...)
 - Rendu
   - [ ] Potentiellement faire des ombres (Ray Traced ?)

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChunkManager {
-    private List<Chunk> m_chunks;
+    private final List<Chunk> m_chunks;
 
     public ChunkManager(List<Chunk> chunks) {
         m_chunks = chunks;

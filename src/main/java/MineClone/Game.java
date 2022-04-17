@@ -1,5 +1,6 @@
 package MineClone;
 
+import MineClone.utils.Utils;
 import MineClone.world.ChunkManager;
 import MineClone.graphics.*;
 import MineClone.player.Player;
@@ -18,6 +19,8 @@ public class Game {
     public static final float MOVEMENT_SENSITIVITY = 10.0f;
     public static final int CHUNK_SIZE = 16;
 
+    public static final long SEED = Utils.rnd.nextLong();
+
     private static Window window = null;
     private final Renderer renderer;
 
@@ -28,9 +31,6 @@ public class Game {
     private final FPS fpsCounter;
 
     private ChunkManager m_chunkManager;
-
-
-    Vector3f cameraInc;
 
     public Game(int width, int height, String title, boolean vSync){
         window = new Window(width, height, title, vSync);
@@ -56,6 +56,8 @@ public class Game {
     }
 
     public void run(){
+
+
         while(!glfwWindowShouldClose(window.windowHandle())){
             update();
             render();
@@ -66,7 +68,7 @@ public class Game {
     private void update(){
         fpsCounter.update();
         player.Update(camera, fpsCounter.deltaTime());
-        System.out.println("MineClone | FPS: " + fpsCounter.getFPS() + " | DeltaTime : " + fpsCounter.deltaTime());
+        System.out.println("FPS: " + fpsCounter.getFPS() + " | DeltaTime : " + fpsCounter.deltaTime());
     }
 
     private void render(){

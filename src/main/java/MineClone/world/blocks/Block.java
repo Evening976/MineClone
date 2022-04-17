@@ -84,39 +84,24 @@ public class Block {
 
 
     public static float[] getVertices(BlockFace face) {
-        switch (face) {
-            case NORTH:
-                return NORTH_VERTS;
-            case SOUTH:
-                return SOUTH_VERTS;
-            case EAST:
-                return EAST_VERTS;
-            case WEST:
-                return WEST_VERTS;
-            case TOP:
-                return TOP_VERTS;
-            case BOTTOM:
-                return BOTTOM_VERTS;
-        }
-
-        return null;
+        return switch (face) {
+            case NORTH -> NORTH_VERTS;
+            case SOUTH -> SOUTH_VERTS;
+            case EAST -> EAST_VERTS;
+            case WEST -> WEST_VERTS;
+            case TOP -> TOP_VERTS;
+            case BOTTOM -> BOTTOM_VERTS;
+        };
     }
 
     public static float[] getTextCoords(BlockType type, BlockFace face) {
         if(type == BlockType.GRASS) {
 
-            switch (face) {
-                case NORTH:
-                case WEST:
-                case EAST:
-                case SOUTH:
-                    return SIDE_TEX;
-                case TOP:
-                    return TOP_TEX;
-                case BOTTOM:
-                    return BOT_TEX;
-
-            }
+            return switch (face) {
+                case NORTH, WEST, EAST, SOUTH -> SIDE_TEX;
+                case TOP -> TOP_TEX;
+                case BOTTOM -> BOT_TEX;
+            };
         }
 
         else if(type == BlockType.STONE) {
@@ -143,15 +128,11 @@ public class Block {
     }
 
     public static String getBlockPath(BlockType type) {
-        switch (type) {
-            case GRASS:
-                return "res/textures/grass.png";
-            case DIRT:
-                return "res/textures/dirt.png";
-            case STONE:
-                return "res/textures/stone.png";
-        }
-        String blockPath = "res/textures/grass.png";
-        return blockPath;
+        return switch (type) {
+            case GRASS -> "res/textures/grass.png";
+            case DIRT -> "res/textures/dirt.png";
+            case STONE -> "res/textures/stone.png";
+            default -> "res/textures/grass.png";
+        };
     }
 }

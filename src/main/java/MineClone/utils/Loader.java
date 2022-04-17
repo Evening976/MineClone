@@ -1,7 +1,7 @@
 package MineClone.utils;
 
 import MineClone.graphics.Model;
-import MineClone.graphics.Texture;
+import org.lwjgl.glfw.GLFWImage;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 
@@ -57,6 +57,31 @@ public class Loader {
         STBImage.stbi_image_free(buffer);
 
         return id;
+    }
+
+    public static GLFWImage.Buffer loadIcon(String path){
+        try(MemoryStack stack = MemoryStack.stackPush()){
+            IntBuffer width = stack.mallocInt(1);
+            IntBuffer height = stack.mallocInt(1);
+            IntBuffer channels = stack.mallocInt(1);
+
+            ByteBuffer buffer = stbi_load(path, width, height, channels, 4);
+
+            if(buffer == null){
+                throw new RuntimeException("Failed to load image " + path + " : " + stbi_failure_reason());
+            }
+
+
+            //this is slow and weird but who cares
+            GLFWImage a = new GLFWImage(buffer);
+
+            a.set(width.get(), height.get(), buffer);
+
+            GLFWImage.Buffer icons = GLFWImage.malloc(1);
+            icons.put(0, a);
+
+            return icons;
+        }
     }
 
     private int createVAO(){

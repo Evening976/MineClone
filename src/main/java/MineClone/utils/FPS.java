@@ -1,7 +1,7 @@
 package MineClone.utils;
 
 public class FPS {
-    private static long SECOND_IN_NANOS = 1000000000;
+    private static final long SECOND_IN_NANOS = 1000000000;
     private long lastTime, currentTime, delta;
     private int fps, frames;
 

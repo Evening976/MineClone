@@ -10,7 +10,7 @@ public enum BlockFace {
 
     private final int id;
 
-    private BlockFace(int id) {
+    BlockFace(int id) {
         this.id = id;
     }
 

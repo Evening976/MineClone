@@ -1,21 +1,20 @@
 package MineClone.player;
 
 import MineClone.Game;
-import MineClone.Input.KeyboardInput;
-import MineClone.Input.MouseInput;
+import MineClone.input.KeyboardInput;
+import MineClone.input.MouseInput;
 import MineClone.graphics.Camera;
 import org.joml.Vector3f;
 
 import static MineClone.Game.MOUSE_SENSITIVITY;
 import static MineClone.Game.MOVEMENT_SENSITIVITY;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT_SHIFT;
 
 public class Player {
-    private KeyboardInput kb;
-    private MouseInput mouse;
+    private final KeyboardInput kb;
+    private final MouseInput mouse;
 
-    private static final boolean CREATIVE_MODE = false;
+    private static final boolean CREATIVE_MODE = true;
 
     private boolean isOnGround;
 
@@ -60,7 +59,7 @@ public class Player {
             cameraInc.y += -1;
         }
 
-        if(!isOnGround){
+        if(!isOnGround && !CREATIVE_MODE){
             cameraInc.y += -MOVEMENT_SENSITIVITY * 4 * dt;
         }
 

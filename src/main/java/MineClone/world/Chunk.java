@@ -1,5 +1,6 @@
 package MineClone.world;
 
+import MineClone.Game;
 import MineClone.world.blocks.Block;
 import MineClone.world.blocks.BlockFace;
 import MineClone.world.blocks.BlockType;
@@ -16,31 +17,26 @@ public class Chunk {
     private static final int CHUNKSIZE = 16;
     private static final int CHUNKSIZE_Y = 64;
     private static final int CHUNKVOLUME = CHUNKSIZE * CHUNKSIZE_Y * CHUNKSIZE;
-    private static final int SEED = Utils.rnd.nextInt();
 
-    private Vector3f Position;
+    private final Vector3f Position;
     float[]  Vertices;
     int[]   Indices;
     float[] texCoords;
     private int[][][] Blocks;
 
     Model chunkModel;
-    Loader loader;
+    final Loader loader;
     private boolean meshed = false;
     private boolean canRender = false;
 
     public Chunk(Vector3f position) throws InterruptedException {
         Position = position;
         Blocks = new int[CHUNKSIZE][CHUNKSIZE_Y][CHUNKSIZE];
-        genChunk(SEED);
+        genChunk();
         loader = new Loader();
         Thread t = new Thread(this::makeMesh);
         t.start();
-
-        while (!meshed) {
-            Thread.sleep(1);
-        }
-        t.interrupt();
+        t.join();
         setTexture();
     }
 
@@ -48,14 +44,11 @@ public class Chunk {
         Position = pos;
         this.loader = loader;
         Blocks = new int[CHUNKSIZE][CHUNKSIZE_Y][CHUNKSIZE];
-        genChunk(SEED);
+        genChunk();
 
         Thread t = new Thread(this::makeMesh);
         t.start();
-
-        while(!meshed){
-            Thread.sleep(1);
-        }
+        t.join();
         setTexture();
     }
 
@@ -65,13 +58,13 @@ public class Chunk {
         canRender = true;
     }
 
-    private void genChunk(int seed){
+    private void genChunk(){
         for (int x = 0; x < CHUNKSIZE; x++) {
             for (int y = 0; y < CHUNKSIZE_Y; y++) {
                 for (int z = 0; z < CHUNKSIZE; z++) {
 
                     int block = BlockType.AIR.getValue();
-                    float ab = OpenSimplex2.noise3_ImproveXZ(SEED, (Position.x + x)/35f , (Position.y + y)/80f, (Position.z + z)/70f) + 1;
+                    float ab = OpenSimplex2.noise3_ImproveXZ(Game.SEED, (Position.x + x)/35f , (Position.y + y)/80f, (Position.z + z)/70f) + 1;
                     int w = (int) (ab / 2 * (CHUNKSIZE_Y/3));
 
                     if(y < Math.abs(w / 2)){
@@ -183,8 +176,8 @@ public class Chunk {
         return Indices;
     }
 
-    public void setBlock(int x, int y, int z, int blockid) {
-        Blocks[x][y][z] = blockid;
+    public void setBlock(int x, int y, int z, BlockType id) {
+        Blocks[x][y][z] = id.getValue();
     }
 
     public int getBlock(int x, int y, int z) {

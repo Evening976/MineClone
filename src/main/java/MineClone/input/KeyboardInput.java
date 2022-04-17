@@ -1,4 +1,4 @@
-package MineClone.Input;
+package MineClone.input;
 
 import MineClone.Game;
 import org.lwjgl.glfw.GLFWKeyCallback;
@@ -7,7 +7,7 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class KeyboardInput {
 
-    int[] keys = new int[65536];
+    final int[] keys = new int[65536];
     GLFWKeyCallback keyCallback;
 
     public KeyboardInput() {
@@ -24,11 +24,6 @@ public class KeyboardInput {
 
     public boolean isKeyDown(int key){
         return keys[key] == GLFW_PRESS || keys[key] == GLFW_REPEAT;
-    }
-
-
-    public boolean isKeyRepeat(int key){
-        return keys[key] == GLFW_REPEAT;
     }
 
     public void register(long window) {

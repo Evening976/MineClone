@@ -1,26 +1,22 @@
 package MineClone;
 
+import MineClone.utils.Loader;
 import org.joml.Matrix4f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
-import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
-
-import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_MULTISAMPLE;
-import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class Window {
     private int width, height;
     private final String title;
-    private Boolean vSync;
-    private Boolean resized;
+    private final Boolean vSync;
     private long window;
 
     private final Matrix4f projectionMatrix;
@@ -50,7 +46,7 @@ public class Window {
         GLFW.glfwWindowHint(GLFW.GLFW_OPENGL_FORWARD_COMPAT, GLFW.GLFW_TRUE);
         GLFW.glfwWindowHint(GLFW.GLFW_SAMPLES, 4);
 
-        Boolean maximised = false;
+        boolean maximised = false;
         if(width == 0 || height == 0) {
             width = 800;
             height = 600;
@@ -66,7 +62,6 @@ public class Window {
         GLFW.glfwSetFramebufferSizeCallback(window, (window, width, height) -> {
             this.width = width;
             this.height = height;
-            setResized(true);
             });
 
         if(maximised){
@@ -74,6 +69,7 @@ public class Window {
         }
         else{
             GLFWVidMode vidMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+            assert vidMode != null;
             GLFW.glfwSetWindowPos(window, (vidMode.width() - width) / 2, (vidMode.height() - height) / 2);
         }
 
@@ -88,6 +84,7 @@ public class Window {
         glEnable(GL_STENCIL_TEST);
         glEnable(GL_MULTISAMPLE);
 
+        glfwSetWindowIcon(window, Loader.loadIcon("res/icon/minecraft.png"));
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
         System.out.println("Window created! OpenGL Version: " + glGetString(GL_VERSION));
     }
@@ -105,58 +102,21 @@ public class Window {
         glfwTerminate();
     }
 
-    public int getWidth() {
-        try(MemoryStack stack = stackPush()){
-            IntBuffer pWidth = stack.mallocInt(1);
-            glfwGetWindowSize(window, pWidth, null);
-            return pWidth.get(0);
-        }
+    public int getWidth(){
+        return  width;
     }
 
     public int getHeight() {
-        try(MemoryStack stack = stackPush()){
-            IntBuffer pHeight = stack.mallocInt(1);
-            glfwGetWindowSize(window, null, pHeight);
-            return pHeight.get(0);
-        }
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public void setTitle(String title) {
-        glfwSetWindowTitle(window, title);
-    }
-
-    public Boolean getvSync() {
-        return vSync;
+        return height;
     }
 
     public long windowHandle() {
         return window;
     }
 
-    public Boolean isResized() {
-        return resized;
-    }
-
-    public void setResized(Boolean resized) {
-        this.resized = resized;
-    }
-
-    public void setVsync(Boolean vSync) {
-        this.vSync = vSync;
-    }
-
     public Matrix4f updateProjectionMatrix(){
         float aspectRatio = (float) getWidth() / (float) getHeight();
         return projectionMatrix.setPerspective(Game.FOV, aspectRatio, Game.Z_NEAR, Game.Z_FAR);
-    }
-
-    public Matrix4f updateProjectionMatrix(Matrix4f matrix, int width, int height){
-        float aspectRatio = (float) width / (float) height;
-        return matrix.setPerspective(Game.FOV, aspectRatio, Game.Z_NEAR, Game.Z_FAR);
     }
 
     public Matrix4f getProjectionMatrix(){

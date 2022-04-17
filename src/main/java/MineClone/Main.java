@@ -1,5 +1,8 @@
 package MineClone;
 
+import javax.swing.*;
+
+
 public class Main {
 
     private static final int WIDTH = 1600;
@@ -12,5 +15,10 @@ public class Main {
         Game game = new Game(WIDTH, HEIGHT, TITLE, VSYNC);
         game.init();
         game.run();
+    }
+
+    private static void setIcon(){
+        ImageIcon image = new ImageIcon("res/icon/minecraft.ico");
+
     }
 }

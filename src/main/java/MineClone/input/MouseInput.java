@@ -1,4 +1,4 @@
-package MineClone.Input;
+package MineClone.input;
 
 import MineClone.Game;
 import org.joml.*;
@@ -11,7 +11,6 @@ public class MouseInput {
     private final Vector3d displVec;
     private boolean inWindow = false, leftButtonPressed = false, rightButtonPressed = false, leftButtonReleased= false;
     private boolean previousLeftBtnPressed = false;
-    double yaw, pitch;
 
     public MouseInput() {
         previousPos = new Vector2d(-1, -1);
@@ -74,11 +73,4 @@ public class MouseInput {
     public Vector3d getDisplVec() {
         return displVec;
     }
-    public float getPitch() {
-        return (float) pitch;
-    }
-    public float getYaw() {
-        return (float) yaw;
-    }
-
 }

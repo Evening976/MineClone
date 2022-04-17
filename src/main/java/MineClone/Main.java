@@ -16,9 +16,4 @@ public class Main {
         game.init();
         game.run();
     }
-
-    private static void setIcon(){
-        ImageIcon image = new ImageIcon("res/icon/minecraft.ico");
-
-    }
 }

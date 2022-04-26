@@ -86,7 +86,7 @@ public class Window {
 
         glfwSetWindowIcon(window, Loader.loadIcon("res/icon/minecraft.png"));
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-        System.out.println("Window created! OpenGL Version: " + glGetString(GL_VERSION));
+        //System.out.println("Window created! OpenGL Version: " + glGetString(GL_VERSION));
     }
 
 

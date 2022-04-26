@@ -9,10 +9,6 @@ public class Block {
             -0.5f, 0.5f, -1.0f, //3
     };
 
-    private static final float[] SOUTH_EAST_VERTS = {
-
-    };
-
     private static final float[] SOUTH_VERTS = {
             -0.5f, -0.5f, 0.0f, //0
             0.5f, -0.5f, 0.0f,
@@ -35,16 +31,16 @@ public class Block {
     };
 
     private static final float[] BOTTOM_VERTS = {
-            -0.5f, -0.5f, 0.0f, //i
-            -0.5f, -0.5f, -1.0f, //j
-            0.5f, -0.5f, -1.0f, //k
+            -0.5f, -0.5f, 0.0f,
+            -0.5f, -0.5f, -1.0f,
+            0.5f, -0.5f, -1.0f,
             0.5f, -0.5f, 0.0f,
     };
 
     private static final float[] TOP_VERTS = {
-            -0.5f, 0.5f, 0.0f, //i
-            -0.5f, 0.5f, -1.0f, //j
-            0.5f, 0.5f, -1.0f, //k
+            -0.5f, 0.5f, 0.0f,
+            -0.5f, 0.5f, -1.0f,
+            0.5f, 0.5f, -1.0f,
             0.5f, 0.5f, 0.0f,
     };
 
@@ -95,8 +91,8 @@ public class Block {
     }
 
     public static float[] getTextCoords(BlockType type, BlockFace face) {
-        if(type == BlockType.GRASS) {
 
+        if(type == BlockType.GRASS){
             return switch (face) {
                 case NORTH, WEST, EAST, SOUTH -> SIDE_TEX;
                 case TOP -> TOP_TEX;
@@ -104,15 +100,11 @@ public class Block {
             };
         }
 
-        else if(type == BlockType.STONE) {
-            return STONE_TEX;
-        }
-
-        else if(type == BlockType.DIRT) {
-            return BOT_TEX;
-        }
-
-        return null;
+        return switch(type) {
+            case STONE -> STONE_TEX;
+            case DIRT -> BOT_TEX;
+            default -> throw new IllegalStateException("Unexpected value: " + type);
+        };
     }
 
     public static int[] getIndices(int sides) {

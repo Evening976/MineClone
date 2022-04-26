@@ -6,9 +6,12 @@ import MineClone.graphics.*;
 import MineClone.player.Player;
 import MineClone.utils.FPS;
 import MineClone.utils.Loader;
+import MineClone.world.World;
 import org.joml.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL11.glFinish;
+import static org.lwjgl.opengl.GL11.glFlush;
 
 public class Game {
 
@@ -18,46 +21,35 @@ public class Game {
     public static final float MOUSE_SENSITIVITY = 0.05f;
     public static final float MOVEMENT_SENSITIVITY = 10.0f;
     public static final int CHUNK_SIZE = 16;
+    public static final int RENDER_DISTANCE = 2 * CHUNK_SIZE;
 
-    public static final long SEED = Utils.rnd.nextLong();
+    public static long SEED;
 
     private static Window window = null;
     private final Renderer renderer;
-
-    private final Loader loader;
     private final Camera camera;
     private final Player player;
-
     private final FPS fpsCounter;
-
-    private ChunkManager m_chunkManager;
+    private final World world;
 
     public Game(int width, int height, String title, boolean vSync){
+        SEED = Utils.rnd.nextLong();
         window = new Window(width, height, title, vSync);
         renderer = new Renderer();
-        loader = new Loader();
         camera = new Camera();
         player = new Player();
         fpsCounter = new FPS();
+        world = new World();
     }
 
     public void init() throws Exception {
         window.create();
         renderer.create();
         player.init();
-
-        m_chunkManager = new ChunkManager();
-
-        for(int x = -7; x < 7; x++){
-            for (int z = -5; z < 5; z++) {
-                m_chunkManager.addChunk(new Vector3f(x * CHUNK_SIZE, -CHUNK_SIZE, z * CHUNK_SIZE));
-            }
-        }
+        world.init();
     }
 
     public void run(){
-
-
         while(!glfwWindowShouldClose(window.windowHandle())){
             update();
             render();
@@ -68,11 +60,13 @@ public class Game {
     private void update(){
         fpsCounter.update();
         player.Update(camera, fpsCounter.deltaTime());
-        System.out.println("FPS: " + fpsCounter.getFPS() + " | DeltaTime : " + fpsCounter.deltaTime());
+        world.Update(camera);
+        //System.out.println("FPS: " + fpsCounter.getFPS() + " | DeltaTime : " + fpsCounter.deltaTime());
     }
 
     private void render(){
-        renderer.renderChnkManager(m_chunkManager, camera);
+        renderer.renderWorld(world, camera);
+        glFlush();
         glfwSwapBuffers(window.windowHandle());
     }
 
@@ -85,7 +79,7 @@ public class Game {
         player.destroy();
         window.destroy();
         renderer.destroy();
-        loader.destroy();
+        world.destroy();
         System.gc();
     }
 }

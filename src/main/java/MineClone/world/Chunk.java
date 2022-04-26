@@ -24,32 +24,32 @@ public class Chunk {
     float[] texCoords;
     private int[][][] Blocks;
 
+    List<Vector3f> neighbors;
+
     Model chunkModel;
     final Loader loader;
     private boolean meshed = false;
     private boolean canRender = false;
 
-    public Chunk(Vector3f position) throws InterruptedException {
+    public Chunk(Vector3f position) {
         Position = position;
         Blocks = new int[CHUNKSIZE][CHUNKSIZE_Y][CHUNKSIZE];
-        genChunk();
         loader = new Loader();
-        Thread t = new Thread(this::makeMesh);
-        t.start();
-        t.join();
-        setTexture();
+        genChunk();
     }
 
-    public Chunk(Vector3f pos, Loader loader) throws InterruptedException {
+    public Chunk(Vector3f pos, Loader loader){
         Position = pos;
         this.loader = loader;
         Blocks = new int[CHUNKSIZE][CHUNKSIZE_Y][CHUNKSIZE];
         genChunk();
+    }
 
-        Thread t = new Thread(this::makeMesh);
-        t.start();
-        t.join();
-        setTexture();
+    public void init(){
+        //neighbors = ChunkHelper.getNeighbors(this, ChunkManager.getChunks());
+        makeMesh();
+        if(meshed)
+            setTexture();
     }
 
     public void setTexture(){
@@ -59,6 +59,7 @@ public class Chunk {
     }
 
     private void genChunk(){
+
         for (int x = 0; x < CHUNKSIZE; x++) {
             for (int y = 0; y < CHUNKSIZE_Y; y++) {
                 for (int z = 0; z < CHUNKSIZE; z++) {
@@ -105,7 +106,12 @@ public class Chunk {
                             }
 
                             BlockType bT = BlockType.values()[Blocks[x][y][z]] ;
+                            if(bT == BlockType.DIRT && face == BlockFace.TOP){
+                                bT = BlockType.GRASS;
+                                Blocks[x][y][z] = BlockType.GRASS.getValue();
+                            }
 
+                            assert Block.getTextCoords(bT, face) != null;
                             System.arraycopy(Block.getTextCoords(bT, face), 0, texCoords, tIndex, Block.getTextCoords(bT, face).length);
                             tIndex += Block.getTextCoords(bT, face).length;
                             vIndex += Block.getVertices(face).length;
@@ -116,13 +122,14 @@ public class Chunk {
             }
         }
 
-        Indices = Block.getIndices(faces);
+        Indices = Block.getIndices(16*16*64);
         meshed = true;
     }
 
     private List<BlockFace> getFaces(int x, int y, int z){
 
         List<BlockFace> faces = new ArrayList<>(6);
+
         if(Blocks[x][y][z] != BlockType.AIR.getValue()){
             if(x == 0 || Blocks[x - 1][y][z] == BlockType.AIR.getValue()){
                 faces.add(BlockFace.WEST);
@@ -153,6 +160,13 @@ public class Chunk {
         return faces;
     }
 
+    public void update(){
+        makeMesh();
+        if(meshed) {
+            setTexture();
+        }
+    }
+
     public boolean isMeshed() {
         return meshed;
     }
@@ -180,8 +194,16 @@ public class Chunk {
         Blocks[x][y][z] = id.getValue();
     }
 
-    public int getBlock(int x, int y, int z) {
-        return Blocks[x][y][z];
+    public void setBlock(Vector3f pos, BlockType id) {
+        setBlock((int)pos.x, (int)pos.y, (int)pos.z, id);
+    }
+
+    public BlockType getBlock(int x, int y, int z) {
+        return BlockType.values()[Blocks[x][y][z]];
+    }
+
+    public BlockType getBlock(Vector3f pos) {
+        return getBlock((int)pos.x, (int)pos.y, (int)pos.z);
     }
 
     public Vector3f getPosition() {

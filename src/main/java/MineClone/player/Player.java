@@ -34,7 +34,17 @@ public class Player {
     public void Update(Camera camera, float dt) {
         kb.update();
         mouse.input();
+        input(dt);
 
+        if(mouse.getDisplVec().y > 90.0f){
+            mouse.getDisplVec().y = 90.0f;
+        }
+
+        camera.movePos(cameraInc);
+        camera.moveRotation(mouse.getDisplVec().mul(MOUSE_SENSITIVITY));
+    }
+
+    private Vector3f input(float dt){
         cameraInc = new Vector3f(0,0,0);
 
         if(kb.isKeyDown(GLFW_KEY_W)){
@@ -61,8 +71,8 @@ public class Player {
 
         if(!isOnGround && !CREATIVE_MODE){
             cameraInc.y += -MOVEMENT_SENSITIVITY * 4 * dt;
-        }
 
+        }
 
         if(cameraInc.x != 0 || cameraInc.y != 0 || cameraInc.z != 0){
             float t = cameraInc.y;
@@ -71,17 +81,7 @@ public class Player {
             cameraInc.mul(dt * MOVEMENT_SENSITIVITY);
         }
 
-
-        if(mouse.getDisplVec().y > 90.0f){
-            mouse.getDisplVec().y = 90.0f;
-        }
-
-        camera.movePos(cameraInc);
-        camera.moveRotation(mouse.getDisplVec().mul(MOUSE_SENSITIVITY));
-    }
-
-    private void collide(){
-
+        return cameraInc;
     }
 
 

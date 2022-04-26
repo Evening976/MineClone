@@ -13,7 +13,7 @@ public class Utils {
             result = scanner.useDelimiter("\\A").next();
         }
         catch (Exception e) {
-            throw new Exception("Could not load resource: " + fileName);
+            throw new Exception(e.getMessage());
         }
         return result;
     }

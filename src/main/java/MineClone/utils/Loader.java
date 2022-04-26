@@ -111,7 +111,7 @@ public class Loader {
         glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
         glVertexAttribPointer(attributeNumber, vertexCount, GL_FLOAT, false, 0, 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
-
+        buffer.clear();
     }
 
     private void unbind(){

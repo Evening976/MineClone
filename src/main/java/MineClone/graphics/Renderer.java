@@ -6,8 +6,10 @@ import MineClone.world.Chunk;
 import MineClone.world.ChunkManager;
 import MineClone.utils.Transformation;
 import MineClone.utils.Utils;
+import MineClone.world.World;
 import org.lwjgl.opengl.GL11;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -94,6 +96,21 @@ public class Renderer {
                 prepare(chunk, camera);
                 glDrawElements(GL11.GL_TRIANGLES, chunk.getModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
             }
+        }
+
+        unbind();
+        shader.unbind();
+    }
+
+    public void renderWorld(World world, Camera camera) {
+        Clear();
+        shader.bind();
+        shader.setUniform("projectionMatrix", window.updateProjectionMatrix());
+
+        for(Chunk ch : world.getRenderList(camera)){
+            bind(ch.getModel());
+            prepare(ch, camera);
+            glDrawElements(GL11.GL_TRIANGLES, ch.getModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
         }
 
         unbind();

@@ -1,13 +1,12 @@
 package MineClone;
 
-import javax.swing.*;
 
 
 public class Main {
 
     private static final int WIDTH = 1600;
     private static final int HEIGHT = 900;
-    private static final Boolean VSYNC = true;
+    private static final Boolean VSYNC = false;
     private static final String TITLE = "MineClone";
 
 

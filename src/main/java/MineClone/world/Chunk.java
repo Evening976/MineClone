@@ -24,7 +24,10 @@ public class Chunk {
     float[] texCoords;
     private int[][][] Blocks;
 
-    List<Vector3f> neighbors;
+    public Vector3f northNeighbour;
+    public Vector3f eastNeighbour;
+    public Vector3f southNeighbour;
+    public Vector3f westNeighbour;
 
     Model chunkModel;
     final Loader loader;
@@ -35,6 +38,13 @@ public class Chunk {
         Position = position;
         Blocks = new int[CHUNKSIZE][CHUNKSIZE_Y][CHUNKSIZE];
         loader = new Loader();
+
+        northNeighbour = new Vector3f(Position.x, Position.y, Position.z - CHUNKSIZE);
+        southNeighbour = new Vector3f(Position.x, Position.y, Position.z + CHUNKSIZE);
+
+        eastNeighbour = new Vector3f(Position.x + CHUNKSIZE, Position.y, Position.z);
+        westNeighbour = new Vector3f(Position.x - CHUNKSIZE, Position.y, Position.z);
+
         genChunk();
     }
 
@@ -46,7 +56,6 @@ public class Chunk {
     }
 
     public void init(){
-        //neighbors = ChunkHelper.getNeighbors(this, ChunkManager.getChunks());
         makeMesh();
         if(meshed)
             setTexture();
@@ -55,11 +64,15 @@ public class Chunk {
     public void setTexture(){
         chunkModel = loader.loadModel(Vertices, texCoords, Indices);
         chunkModel.setTexture(new Texture(loader.loadTexture(Block.getBlockPath(BlockType.GRASS))));
+
+        Vertices = null;
+        Indices = null;
+        texCoords = null;
+
         canRender = true;
     }
 
     private void genChunk(){
-
         for (int x = 0; x < CHUNKSIZE; x++) {
             for (int y = 0; y < CHUNKSIZE_Y; y++) {
                 for (int z = 0; z < CHUNKSIZE; z++) {
@@ -81,13 +94,14 @@ public class Chunk {
                 }
             }
         }
+
     }
 
 
     public void makeMesh(){
         int vIndex = 0;
         int tIndex = 0;
-        Vertices = new float[CHUNKVOLUME * 12 * 6];
+        Vertices = new float[16*16*16*12]; //CHUNKVOLUME * 12 * 6
         texCoords = new float[CHUNKVOLUME * 8 * 6 * 4];
 
         int faces = 0;
@@ -131,11 +145,11 @@ public class Chunk {
         List<BlockFace> faces = new ArrayList<>(6);
 
         if(Blocks[x][y][z] != BlockType.AIR.getValue()){
-            if(x == 0 || Blocks[x - 1][y][z] == BlockType.AIR.getValue()){
+            if(x == 0 && !ChunkManager.isChunkLoaded(westNeighbour) || x!= 0 && Blocks[x - 1][y][z] == BlockType.AIR.getValue()){
                 faces.add(BlockFace.WEST);
             }
 
-            if(x == CHUNKSIZE - 1 || Blocks[x + 1][y][z] == BlockType.AIR.getValue()){
+            if(x == CHUNKSIZE - 1 && !ChunkManager.isChunkLoaded(eastNeighbour) || x != CHUNKSIZE - 1 && Blocks[x + 1][y][z] == BlockType.AIR.getValue()){
                 faces.add(BlockFace.EAST);
             }
 
@@ -147,11 +161,11 @@ public class Chunk {
                 faces.add(BlockFace.TOP);
             }
 
-            if(z == 0 || Blocks[x][y][z - 1] == BlockType.AIR.getValue()){
+            if(z == 0 && !ChunkManager.isChunkLoaded(northNeighbour) || z != 0 && Blocks[x][y][z - 1] == BlockType.AIR.getValue()){
                 faces.add(BlockFace.NORTH);
             }
 
-            if(z == CHUNKSIZE - 1 || Blocks[x][y][z + 1] == BlockType.AIR.getValue()){
+            if(z == CHUNKSIZE - 1 && !ChunkManager.isChunkLoaded(southNeighbour) || z != CHUNKSIZE - 1 && Blocks[x][y][z + 1] == BlockType.AIR.getValue()){
                 faces.add(BlockFace.SOUTH);
             }
 

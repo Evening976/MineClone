@@ -13,7 +13,7 @@ import static MineClone.Game.RENDER_DISTANCE;
 
 public class ChunkManager {
     //private static List<Chunk> m_chunks = new ArrayList<>();
-    private static Map<Vector3f, Chunk> m_chunksMap = new HashMap<>();
+    private static final Map<Vector3f, Chunk> m_chunksMap = new HashMap<>();
     private List<Chunk> m_chunksToUpdate;
 
 
@@ -39,10 +39,6 @@ public class ChunkManager {
         }
     }
 
-    public void addChunk(Chunk chunk) {
-        m_chunksMap.put(chunk.getPosition(), chunk);
-    }
-
     public void updateChunks(Camera camera) {
 
         for (Iterator<Chunk> it = m_chunksMap.values().iterator(); it.hasNext();) {
@@ -60,8 +56,12 @@ public class ChunkManager {
 
     public void addChunkToUpdate(Chunk chunk) {
         if(!m_chunksToUpdate.contains(chunk) && chunk != null) {
-            m_chunksToUpdate.add(chunk);
+            addToUpdate(chunk);
         }
+    }
+
+    public static boolean isChunkLoaded(Vector3f position) {
+        return m_chunksMap.containsKey(position);
     }
 
     public Chunk getChunk(int x, int y, int z) {
@@ -69,7 +69,6 @@ public class ChunkManager {
     }
 
     public Chunk getChunk(Vector3f position) {
-        //position = new Vector3f(position.x * CHUNK_SIZE, position.y, position.z * CHUNK_SIZE);
 
         if(m_chunksMap.containsKey(position)) {
             return m_chunksMap.get(position);
@@ -104,24 +103,50 @@ public class ChunkManager {
         return closest;
     }
 
-    private Vector3f getClosestVec(Vector3f position) {
+    private Vector3f getClosestPos(Vector3f Position){
         Vector3f closest = null;
         float closestDistance = Float.MAX_VALUE;
 
-        for (Chunk chunk : m_chunksMap.values()) {
-            float distance = chunk.getPosition().distance(position);
+        for (Vector3f chunk : m_chunksMap.keySet()) {
+            float distance = chunk.distance(Position);
             if (distance < closestDistance) {
-                closest = chunk.getPosition();
+                closest = chunk;
                 closestDistance = distance;
             }
         }
         return closest;
     }
 
+    private Vector3f getFarthestChunk(Vector3f position){
+        Vector3f farthest = null;
+        float farthestDistance = Float.MIN_VALUE;
+
+        for (Vector3f chunk : m_chunksMap.keySet()) {
+            float distance = chunk.distance(position);
+            if (distance > farthestDistance) {
+                farthest = chunk;
+                farthestDistance = distance;
+            }
+        }
+        return farthest;
+    }
+
+    private float getFarthestChunkF(Vector3f position){
+        float farthestDistance = Float.MIN_VALUE;
+
+        for (Vector3f chunk : m_chunksMap.keySet()) {
+            float distance = chunk.distance(position);
+            if (distance > farthestDistance) {
+                farthestDistance = distance;
+            }
+        }
+        return farthestDistance;
+    }
+
     private float getClosestF(Vector3f position){
         float closestDistance = Float.MAX_VALUE;
-        for (Chunk chunk : m_chunksMap.values()) {
-            float distance = chunk.getPosition().distance(position);
+        for (Vector3f chunk : m_chunksMap.keySet()) {
+            float distance = chunk.distance(position);
             if (distance < closestDistance) {
                 closestDistance = distance;
             }
@@ -129,32 +154,12 @@ public class ChunkManager {
         return closestDistance;
     }
 
-    public void removeChunk(Chunk chunk) {
-        //m_chunks.remove(chunk);
-        m_chunksToUpdate.remove(chunk);
-        for (int x = 0; x < 4; x++) {
-            for (int y = 0; y < 4; y++) {
-                for (int z = 0; z < 4; z++) {
-                    m_chunksToUpdate.add(getChunk((int) chunk.getPosition().x + x, (int) chunk.getPosition().y + y, (int) chunk.getPosition().z + z));
-                }
-            }
-        }
-    }
-
-    public void removeChunk(int x, int y, int z) {
-        removeChunk(new Vector3f(x, y, z));
-    }
-
-    public void removeChunk(Vector3f position) {
-        m_chunksMap.remove(position);
-    }
-
     public void removeBlock(Vector3f position) {
         Chunk chunk = getChunk(position);
         if (chunk != null) {
             chunk.setBlock(position, BlockType.AIR);
         }
-        m_chunksToUpdate.add(chunk);
+        addToUpdate(chunk);
     }
 
     public void addBlock(Vector3f position, BlockType blockType) {
@@ -162,20 +167,52 @@ public class ChunkManager {
         if (chunk != null && chunk.getBlock(position) == BlockType.AIR) {
             chunk.setBlock(position, blockType);
         }
-        m_chunksToUpdate.add(chunk);
+        addToUpdate(chunk);
     }
 
     public void addChunk(Vector3f pos){
         if(!m_chunksMap.containsKey(pos) && getClosestF(pos) >= CHUNK_SIZE) {
             Chunk chunk = new Chunk(pos);
             m_chunksMap.put(pos, chunk);
-            m_chunksToUpdate.add(chunk);
+            addToUpdate(chunk);
         }
+    }
+
+    public void Gen(Vector3f playerPos) {
+
+        Map<Vector3f, Chunk> toAdd = new HashMap<>();
+        for(Chunk c : m_chunksMap.values()){
+
+            if(c.northNeighbour.distance(playerPos) <= RENDER_DISTANCE && !m_chunksMap.containsKey(c.northNeighbour)){
+                Chunk chunk = new Chunk(c.northNeighbour);
+                toAdd.put(c.northNeighbour, chunk);
+                addToUpdate(chunk);
+            }
+            if(c.eastNeighbour.distance(playerPos) <= RENDER_DISTANCE && !m_chunksMap.containsKey(c.eastNeighbour)){
+                Chunk chunk = new Chunk(c.eastNeighbour);
+                toAdd.put(c.eastNeighbour, chunk);
+                addToUpdate(chunk);
+            }
+            if(c.westNeighbour.distance(playerPos) <= RENDER_DISTANCE && !m_chunksMap.containsKey(c.westNeighbour)){
+                Chunk chunk = new Chunk(c.westNeighbour);
+                toAdd.put(c.westNeighbour, chunk);
+                addToUpdate(chunk);
+            }
+            if(c.southNeighbour.distance(playerPos) <= RENDER_DISTANCE && !m_chunksMap.containsKey(c.southNeighbour)){
+                Chunk chunk = new Chunk(c.southNeighbour);
+                toAdd.put(c.southNeighbour, chunk);
+                addToUpdate(chunk);
+            }
+        }
+
+        m_chunksMap.putAll(toAdd);
+        toAdd.clear();
     }
 
     public BlockType getBlock(int x, int y, int z) {
         return getChunk(x, y, z).getBlock(x, y, z);
     }
+
 
     public void addToUpdate(Chunk chunk) {
         if(!m_chunksToUpdate.contains(chunk))

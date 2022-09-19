@@ -9,8 +9,6 @@ import java.util.List;
 import static MineClone.Game.CHUNK_SIZE;
 
 public class World {
-
-    private static final int RENDER_DISTANCE = Game.RENDER_DISTANCE;
     private final ChunkManager _chnkManager;
 
     public World() {
@@ -27,14 +25,7 @@ public class World {
     }
 
     public void Update(Camera camera) {
-
-        _chnkManager.addChunk(new Vector3f((float) Math.floor((double)camera.getPosition().x + 16), -CHUNK_SIZE, (float)Math.floor((double)camera.getPosition().z + 16)));
-        _chnkManager.addChunk(new Vector3f((float) Math.floor((double)camera.getPosition().x + 16), -CHUNK_SIZE, (float)Math.floor(camera.getPosition().z)));
-        _chnkManager.addChunk(new Vector3f((float) Math.floor((double)camera.getPosition().x), -CHUNK_SIZE, (float)Math.floor((double)camera.getPosition().z + 16)));
-        _chnkManager.addChunk(new Vector3f((float) Math.floor((double)camera.getPosition().x - 16), -CHUNK_SIZE, (float)Math.floor((double)camera.getPosition().z + 16)));
-        _chnkManager.addChunk(new Vector3f((float) Math.floor((double)camera.getPosition().x - 16), -CHUNK_SIZE, (float)Math.floor(camera.getPosition().z)));
-        _chnkManager.addChunk(new Vector3f((float) Math.floor((double)camera.getPosition().x - 16), -CHUNK_SIZE, (float)Math.floor((double)camera.getPosition().z - 16)));
-
+        _chnkManager.Gen(new Vector3f((float) Math.floor(camera.getPosition().x), -CHUNK_SIZE, (float)Math.floor(camera.getPosition().z)));
         _chnkManager.updateChunks(camera);
     }
 

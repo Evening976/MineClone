@@ -1,16 +1,12 @@
 package MineClone;
 
 import MineClone.utils.Utils;
-import MineClone.world.ChunkManager;
 import MineClone.graphics.*;
 import MineClone.player.Player;
 import MineClone.utils.FPS;
-import MineClone.utils.Loader;
 import MineClone.world.World;
-import org.joml.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.glFinish;
 import static org.lwjgl.opengl.GL11.glFlush;
 
 public class Game {
@@ -21,7 +17,7 @@ public class Game {
     public static final float MOUSE_SENSITIVITY = 0.05f;
     public static final float MOVEMENT_SENSITIVITY = 10.0f;
     public static final int CHUNK_SIZE = 16;
-    public static final int RENDER_DISTANCE = 2 * CHUNK_SIZE;
+    public static final int RENDER_DISTANCE = 4 * CHUNK_SIZE;
 
     public static long SEED;
 
@@ -61,7 +57,6 @@ public class Game {
         fpsCounter.update();
         player.Update(camera, fpsCounter.deltaTime());
         world.Update(camera);
-        //System.out.println("FPS: " + fpsCounter.getFPS() + " | DeltaTime : " + fpsCounter.deltaTime());
     }
 
     private void render(){

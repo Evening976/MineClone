@@ -20,7 +20,6 @@ public class Chunk {
 
     private final Vector3f Position;
     float[]  Vertices;
-    int[]   Indices;
     float[] texCoords;
     private int[][][] Blocks;
 
@@ -62,11 +61,10 @@ public class Chunk {
     }
 
     public void setTexture(){
-        chunkModel = loader.loadModel(Vertices, texCoords, Indices);
+        chunkModel = loader.loadModel(Vertices, texCoords, getIndices());
         chunkModel.setTexture(new Texture(loader.loadTexture(Block.getBlockPath(BlockType.GRASS))));
 
         Vertices = null;
-        Indices = null;
         texCoords = null;
 
         canRender = true;
@@ -104,16 +102,13 @@ public class Chunk {
         Vertices = new float[16*16*16*12]; //CHUNKVOLUME * 12 * 6
         texCoords = new float[CHUNKVOLUME * 8 * 6 * 4];
 
-        int faces = 0;
-
         for (int x = 0; x < CHUNKSIZE; x++) {
             for(int y = 0; y < CHUNKSIZE_Y; y++) {
                 for(int z = 0; z < CHUNKSIZE; z++) {
 
-                    for (BlockFace face : getFaces(x, y, z)) {
+                    for (BlockFace face : getBlockVisibleFaces(x, y, z)) {
                         if(face != null){
                             for (int i = 0; i < Block.getVertices(face).length; i+=3) {
-                                assert Block.getVertices(face) != null;
                                 Vertices[vIndex + i] = Block.getVertices(face)[i] + x;
                                 Vertices[vIndex + i + 1] = Block.getVertices(face)[i + 1] + y;
                                 Vertices[vIndex + i + 2] = Block.getVertices(face)[i + 2] + z;
@@ -125,22 +120,19 @@ public class Chunk {
                                 Blocks[x][y][z] = BlockType.GRASS.getValue();
                             }
 
-                            assert Block.getTextCoords(bT, face) != null;
                             System.arraycopy(Block.getTextCoords(bT, face), 0, texCoords, tIndex, Block.getTextCoords(bT, face).length);
                             tIndex += Block.getTextCoords(bT, face).length;
                             vIndex += Block.getVertices(face).length;
-                            faces++;
                         }
                     }
                 }
             }
         }
 
-        Indices = Block.getIndices(16*16*64);
         meshed = true;
     }
 
-    private List<BlockFace> getFaces(int x, int y, int z){
+    private List<BlockFace> getBlockVisibleFaces(int x, int y, int z){
 
         List<BlockFace> faces = new ArrayList<>(6);
 
@@ -168,7 +160,6 @@ public class Chunk {
             if(z == CHUNKSIZE - 1 && !ChunkManager.isChunkLoaded(southNeighbour) || z != CHUNKSIZE - 1 && Blocks[x][y][z + 1] == BlockType.AIR.getValue()){
                 faces.add(BlockFace.SOUTH);
             }
-
         }
 
         return faces;
@@ -201,7 +192,7 @@ public class Chunk {
     }
 
     public int[] getIndices() {
-        return Indices;
+        return Block.getIndices(CHUNKSIZE*CHUNKSIZE_Y*CHUNKSIZE);
     }
 
     public void setBlock(int x, int y, int z, BlockType id) {
@@ -222,5 +213,11 @@ public class Chunk {
 
     public Vector3f getPosition() {
         return Position;
+    }
+
+    public void destroy(){
+        if(meshed){
+            chunkModel.destroy();
+        }
     }
 }

@@ -18,9 +18,9 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL20.glDisableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL30.glBindVertexArray;
+import static org.lwjgl.opengl.GL31.glDrawElementsInstanced;
 
 public class Renderer {
-    public static final int VIEW_DISTANCE = Game.CHUNK_SIZE * 1000;
     private final Window window;
     private ShaderManager shader;
 
@@ -51,9 +51,18 @@ public class Renderer {
 
         for(Chunk ch : world.getRenderList(camera)){
             bind(ch.getModel());
+            prepare(ch,camera);
+            glDrawElementsInstanced(GL_TRIANGLES, ch.getModel().getVertexCount(), GL_UNSIGNED_INT, 0, 1);
+        }
+
+        //glDrawElementsInstanced(GL_TRIANGLES, world.getRenderList(camera).size(), GL_UNSIGNED_INT, 0, world.getRenderList(camera).size());
+
+        /*
+        for(Chunk ch : world.getRenderList(camera)){
+            bind(ch.getModel());
             prepare(ch, camera);
             glDrawElements(GL11.GL_TRIANGLES, ch.getModel().getVertexCount(), GL11.GL_UNSIGNED_INT, 0);
-        }
+        }*/
 
         unbind();
         shader.unbind();
@@ -73,11 +82,6 @@ public class Renderer {
         glBindVertexArray(0);
     }
 
-    public void prepare(Entity entity, Camera camera){
-        shader.setUniform("textureSampler", 0);
-        shader.setUniform("transformationMatrix", Transformation.createTransformationMatrix(entity));
-        shader.setUniform("viewMatrix", Transformation.getViewMatrix(camera));
-    }
 
     public void prepare(Chunk chunk, Camera camera){
         shader.setUniform("textureSampler", 0);

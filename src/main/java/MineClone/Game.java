@@ -5,6 +5,7 @@ import MineClone.graphics.*;
 import MineClone.player.Player;
 import MineClone.utils.FPS;
 import MineClone.world.World;
+import lwjgui.LWJGUI;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.glFlush;
@@ -18,6 +19,8 @@ public class Game {
     public static final float MOVEMENT_SENSITIVITY = 10.0f;
     public static final int CHUNK_SIZE = 16;
     public static final int RENDER_DISTANCE = 4 * CHUNK_SIZE;
+
+    public static GameState GAME_STATE = GameState.PAUSE;
 
     public static long SEED;
 
@@ -51,6 +54,7 @@ public class Game {
             render();
         }
         destroyGame();
+
     }
 
     private void update(){

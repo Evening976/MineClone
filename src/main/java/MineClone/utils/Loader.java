@@ -22,11 +22,11 @@ public class Loader {
 
     public Model loadModel(float[] vertices, float[] texCoords, int[] indices){
         int vaoID = createVAO();
-        storeIndicesBuffer(indices);
+        int vboID = storeIndicesBuffer(indices);
         storeDataInAttribList(0, 3, vertices);
         storeDataInAttribList(1,2, texCoords);
         unbind();
-        return new Model(vaoID, indices.length);
+        return new Model(vaoID, vboID, indices.length);
     }
 
     public int loadTexture(String fileName){
@@ -91,13 +91,15 @@ public class Loader {
         return vaoID;
     }
 
-    private void storeIndicesBuffer(int[] indices){
+    private int storeIndicesBuffer(int[] indices){
         int vbo = glGenBuffers();
         vbos.add(vbo);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo);
 
         IntBuffer buffer = Buffer.createIntBuffer(indices);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, buffer, GL_STATIC_DRAW);
+
+        return vbo;
     }
 
     private void storeDataInAttribList(int attributeNumber, int vertexCount, float[] data){

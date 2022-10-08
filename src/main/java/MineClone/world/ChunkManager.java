@@ -12,7 +12,6 @@ import static MineClone.Game.CHUNK_SIZE;
 import static MineClone.Game.RENDER_DISTANCE;
 
 public class ChunkManager {
-    //private static List<Chunk> m_chunks = new ArrayList<>();
     private static final Map<Vector3f, Chunk> m_chunksMap = new HashMap<>();
     private List<Chunk> m_chunksToUpdate;
 
@@ -44,6 +43,7 @@ public class ChunkManager {
         for (Iterator<Chunk> it = m_chunksMap.values().iterator(); it.hasNext();) {
             Chunk chunk = it.next();
             if (chunk.getPosition().distance(camera.getPosition()) > RENDER_DISTANCE) {
+                chunk.destroy();
                 it.remove();
                 m_chunksToUpdate.remove(chunk);
             }
@@ -224,6 +224,9 @@ public class ChunkManager {
         for (Chunk chunk : m_chunksMap.values()) {
             if(chunk.getPosition().distance(camera.getPosition()) < RENDER_DISTANCE && chunk.canChnkRender()) {
                 t.add(chunk);
+            }
+            else{
+                chunk.destroy();
             }
         }
 

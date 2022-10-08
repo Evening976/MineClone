@@ -20,6 +20,13 @@
     <lwjgl.natives>natives-windows</lwjgl.natives>
   </properties>
 
+  <repositories>
+    <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+    </repository>
+  </repositories>
+
   <dependencyManagement>
     <dependencies>
       <dependency>
@@ -373,6 +380,16 @@
       <groupId>org.joml</groupId>
       <artifactId>joml</artifactId>
       <version>${joml.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.orange451</groupId>
+      <artifactId>LWJGUI</artifactId>
+      <version>pre-mt</version>
+    </dependency>
+    <dependency>
+      <groupId>nokori.clear</groupId>
+      <artifactId>ClearWindows</artifactId>
+      <version>${clear.version}</version>
     </dependency>
   </dependencies>
 

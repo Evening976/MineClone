@@ -137,11 +137,11 @@ public class Chunk {
         List<BlockFace> faces = new ArrayList<>(6);
 
         if(Blocks[x][y][z] != BlockType.AIR.getValue()){
-            if(x == 0 && !ChunkManager.isChunkLoaded(westNeighbour) || x!= 0 && Blocks[x - 1][y][z] == BlockType.AIR.getValue()){
+            if(x == 0 /*&& !ChunkManager.isChunkLoaded(westNeighbour)*/ || x!= 0 && Blocks[x - 1][y][z] == BlockType.AIR.getValue()){
                 faces.add(BlockFace.WEST);
             }
 
-            if(x == CHUNKSIZE - 1 && !ChunkManager.isChunkLoaded(eastNeighbour) || x != CHUNKSIZE - 1 && Blocks[x + 1][y][z] == BlockType.AIR.getValue()){
+            if(x == CHUNKSIZE - 1 /*&& !ChunkManager.isChunkLoaded(eastNeighbour)*/ || x != CHUNKSIZE - 1 && Blocks[x + 1][y][z] == BlockType.AIR.getValue()){
                 faces.add(BlockFace.EAST);
             }
 
@@ -153,11 +153,11 @@ public class Chunk {
                 faces.add(BlockFace.TOP);
             }
 
-            if(z == 0 && !ChunkManager.isChunkLoaded(northNeighbour) || z != 0 && Blocks[x][y][z - 1] == BlockType.AIR.getValue()){
+            if(z == 0 /*&& !ChunkManager.isChunkLoaded(northNeighbour*/ || z != 0 && Blocks[x][y][z - 1] == BlockType.AIR.getValue()){
                 faces.add(BlockFace.NORTH);
             }
 
-            if(z == CHUNKSIZE - 1 && !ChunkManager.isChunkLoaded(southNeighbour) || z != CHUNKSIZE - 1 && Blocks[x][y][z + 1] == BlockType.AIR.getValue()){
+            if(z == CHUNKSIZE - 1 /*&& !ChunkManager.isChunkLoaded(southNeighbour)*/ || z != CHUNKSIZE - 1 && Blocks[x][y][z + 1] == BlockType.AIR.getValue()){
                 faces.add(BlockFace.SOUTH);
             }
         }

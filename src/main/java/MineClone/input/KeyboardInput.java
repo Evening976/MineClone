@@ -1,6 +1,7 @@
 package MineClone.input;
 
 import MineClone.Game;
+import MineClone.utils.GameState;
 import org.lwjgl.glfw.GLFWKeyCallback;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -15,7 +16,7 @@ public class KeyboardInput {
             @Override
             public void invoke(long window, int key, int scancode, int action, int mods) {
                 keys[key] = action;
-                if(keys[GLFW_KEY_ESCAPE] == GLFW_PRESS) {
+                if(keys[GLFW_KEY_ESCAPE] == GLFW_PRESS || keys[GLFW_KEY_ESCAPE] == GLFW_REPEAT) {
                     glfwSetWindowShouldClose(window, true);
                 }
             }

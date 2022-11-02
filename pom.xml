@@ -386,11 +386,6 @@
       <artifactId>LWJGUI</artifactId>
       <version>pre-mt</version>
     </dependency>
-    <dependency>
-      <groupId>nokori.clear</groupId>
-      <artifactId>ClearWindows</artifactId>
-      <version>${clear.version}</version>
-    </dependency>
   </dependencies>
 
   <build>

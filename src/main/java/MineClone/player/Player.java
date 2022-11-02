@@ -4,6 +4,7 @@ import MineClone.Game;
 import MineClone.input.KeyboardInput;
 import MineClone.input.MouseInput;
 import MineClone.graphics.Camera;
+import MineClone.utils.GameState;
 import org.joml.Vector3f;
 
 import static MineClone.Game.MOUSE_SENSITIVITY;
@@ -32,16 +33,16 @@ public class Player {
     }
 
     public void Update(Camera camera, float dt) {
-        kb.update();
-        mouse.input();
-        input(dt);
+            kb.update();
+            mouse.input();
+            input(dt);
 
-        if(mouse.getDisplVec().y > 90.0f){
-            mouse.getDisplVec().y = 90.0f;
-        }
+            if(mouse.getDisplVec().y > 90.0f){
+                mouse.getDisplVec().y = 90.0f;
+            }
 
-        camera.movePos(cameraInc);
-        camera.moveRotation(mouse.getDisplVec().mul(MOUSE_SENSITIVITY));
+            camera.movePos(cameraInc);
+            camera.moveRotation(mouse.getDisplVec().mul(MOUSE_SENSITIVITY));
     }
 
     private Vector3f input(float dt){

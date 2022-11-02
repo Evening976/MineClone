@@ -1,11 +1,11 @@
 package MineClone;
 
+import MineClone.utils.GameState;
 import MineClone.utils.Utils;
 import MineClone.graphics.*;
 import MineClone.player.Player;
 import MineClone.utils.FPS;
 import MineClone.world.World;
-import lwjgui.LWJGUI;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.glFlush;
@@ -57,7 +57,7 @@ public class Game {
 
     }
 
-    private void update(){
+    private void update() {
         fpsCounter.update();
         player.Update(camera, fpsCounter.deltaTime());
         world.Update(camera);
